@@ -8,7 +8,7 @@ export const getImagesURLs = (data)=>{
       let element =
       _layer.elements[Math.floor(rand * number)] ? _layer.elements[Math.floor(rand * number)] : null;
     
-      if (element.file) {
+      if (element) {
         url = URL.createObjectURL(element.file)
         name = element.name
         attribut = {trait_type: _layer.name, value: element.name};

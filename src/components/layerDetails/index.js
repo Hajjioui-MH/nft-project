@@ -27,7 +27,7 @@ function Index({ layers, setLayers, currentLayer, setCurrentLayer, setAvailableN
 			const newElement = {
 				id: uuidv4(), 
 				name: file?.name ? file.name.split(".")[0] : "", 
-				file_rarity: 100/(currentLayer.elements.length+1), 
+				file_rarity: 100, /*100/(currentLayer.elements.length+1)*/
 				file_extension: file?.name ? file.name.split(".")[1] : "", 
 				file
 			}
@@ -96,7 +96,9 @@ function Index({ layers, setLayers, currentLayer, setCurrentLayer, setAvailableN
    						<Grid.Row columns={3}>
    						{listImages.map(element=> (
    							<Grid.Column key={element.id}>
-						        <ImageCard handleUpload={handleUpload} name={element.name} rarity={element.file_rarity} source={URL.createObjectURL(element.file)} />
+						        <ImageCard id={element.id} name={element.name} rarity={element.file_rarity} source={URL.createObjectURL(element.file)} 
+						        	layers={layers} currentLayer={currentLayer} setLayers={setLayers} setCurrentLayer={setCurrentLayer}
+						        />
 						    </Grid.Column>
    						) )}
 						    <Grid.Column>
