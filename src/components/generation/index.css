@@ -1,0 +1,33 @@
+.container-generation{width: 100%;margin-top: 2em;}
+.container-generation h2{
+	text-align: left;
+	font: normal normal bold 24px/30px Lato;
+	letter-spacing: 0px;
+	color: #000000DE;
+	opacity: 1;
+}
+.container-generation h3{
+	text-align: left;
+	font: normal normal bold 18px/23px Lato;
+	letter-spacing: 0px;
+	color: #000000DE;
+	opacity: 1;
+}
+.container-generation p{
+	text-align: left;
+	font: normal normal normal 16px/22px Lato;
+	letter-spacing: 0px;
+	color: #00000099;
+	opacity: 1;
+}
+.container-generation .preview{
+	margin-top: 0.5em !important;
+}
+.container-generation .isready{margin-top: 1.5em !important; margin-bottom: 5em !important;}
+.container-generation .input{width: 100%;}
+.container-generation .button{width: 100%;}
+
+.image>img{
+    height: 200px !important;
+    object-fit: cover !important;
+}

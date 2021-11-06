@@ -1,0 +1,29 @@
+header{
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	position: fixed;
+	height: 64px;
+	background: #F4F4F4 0% 0% no-repeat padding-box;
+	opacity: 1;
+	display: flex !important;
+	align-items: center;
+	justify-content: space-between;
+	padding: 0 3%;
+	z-index: 99;
+}
+header .left-side span{cursor: pointer;}
+header .left-side{
+	width: 124px;
+	display: flex;
+	align-items: center;
+	justify-content: space-around;
+}
+header .right-side p{
+	text-align: left;
+	font: normal normal bold 14px/17px Lato;
+	letter-spacing: 0px;
+	color: #00000099;
+	opacity: 1;
+	cursor: pointer;
+}

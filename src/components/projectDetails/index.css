@@ -1,0 +1,47 @@
+.container-project{
+	width: 60%;
+}
+.container-project h2{
+	text-align: left;
+	font: normal normal bold 24px/30px Lato;
+	letter-spacing: 0px;
+	color: #000000DE;
+	opacity: 1;
+}
+.container-project h3{
+	text-align: left;
+	font: normal normal bold 18px/23px Lato;
+	letter-spacing: 0px;
+	color: #000000DE;
+	opacity: 1;
+}
+.container-project p{
+	text-align: left;
+	font: normal normal normal 16px/22px Lato;
+	letter-spacing: 0px;
+	color: #00000099;
+	opacity: 1;
+}
+.container-project .field{margin-bottom: 2em;}
+.container-project .field .label{
+	text-align: left;
+	font: normal normal bold 13px/16px Lato;
+	letter-spacing: 0px;
+	color: #333333DE;
+	opacity: 1;
+}
+.container-project .field .input{width: 100%;}
+textarea{
+	border: 1px solid rgba(34,36,38,.15);
+    width: 100%;
+    height: 204px !important;
+    padding: 6px;
+}
+
+.container-project .checkbox{
+	text-align: left;
+	font: normal normal normal 14px/24px Lato;
+	letter-spacing: 0px;
+	color: #000000CC;
+	opacity: 1;
+}

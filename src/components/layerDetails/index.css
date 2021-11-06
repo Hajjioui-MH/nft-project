@@ -1,0 +1,81 @@
+.container-layer{width: 100%;margin-top: 2em;}
+.container-layer h2{
+	text-align: left;
+	font: normal normal bold 24px/30px Lato;
+	letter-spacing: 0px;
+	color: #000000DE;
+	opacity: 1;
+}
+.container-layer h3{
+	text-align: left;
+	font: normal normal bold 18px/23px Lato;
+	letter-spacing: 0px;
+	color: #000000DE;
+	opacity: 1;
+}
+.container-layer p{
+	text-align: left;
+	font: normal normal normal 16px/22px Lato;
+	letter-spacing: 0px;
+	color: #00000099;
+	opacity: 1;
+}
+.container-layer .field{margin-bottom: 0.5em;}
+.container-layer .field .label{
+	text-align: left;
+	font: normal normal bold 13px/16px Lato;
+	letter-spacing: 0px;
+	color: #333333DE;
+	opacity: 1;
+}
+.container-layer .flex-row{
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+.container-layer .layer-content{
+	margin-top: 1.5em;
+	display: flex;
+	justify-content: space-between;
+}
+.container-layer .left-side{
+	width: 210px;
+	display: flex;
+	flex-direction: column;
+}
+.container-layer .right-side{
+	border-left: 0.5px solid #DEDEDF;
+	opacity: 1;
+	width: 77%;
+	padding-left: 7px;
+}
+.container-layer .layer{
+	width: 210px;
+	height: 35px;
+	border-radius: 4px;
+	opacity: 1;
+	text-align: left;
+	font: normal normal bold 13px/16px Lato;
+	letter-spacing: 0px;
+	color: #000000CC;
+	margin: 3px 0;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	padding: 8px;
+}
+.container-layer .field .input{width: 100%;}
+.container-layer .right-side .layer-images{
+	margin-top: 0.5em;
+}
+.image>img{
+    height: 200px !important;
+    object-fit: cover !important;
+}
+
+#upload-icon{
+	cursor: pointer;
+	position: absolute;
+    right: 0;
+    z-index: 1;
+}

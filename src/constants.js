@@ -1,0 +1,1 @@
+export const networkChoice = {Ethereum: "ethereum", Solana: "solana"}
