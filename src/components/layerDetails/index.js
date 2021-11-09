@@ -5,14 +5,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 import './index.css'
 const cardStyle = {
-	width: '230px',
+	width: '222px',
 	height: '280px',
 	marginBottom: '7px'
 }
 
 function Index({ layers, setLayers, currentLayer, setCurrentLayer, setAvailableNfts, setCollectionSize }) {
-	const [title, setTitle] = useState("")
-	const [layerRarity, setLayerRarity] = useState("")
+	const [title, setTitle] = useState(currentLayer.name)
+	const [layerRarity, setLayerRarity] = useState(currentLayer.layer_rarity)
 	const [listImages, setListImages] = useState([])
 
 	useEffect(() => {
@@ -22,20 +22,21 @@ function Index({ layers, setLayers, currentLayer, setCurrentLayer, setAvailableN
 
 	const addImageToLayer = (event)=>{
 		const file = event.files[0]
-		console.log("onChange => addImageToLayer: ", file)
+		const rarity = (100/(currentLayer.elements.length+1)).toFixed(2).replace(/\.00/g, '')
 		if(file){
 			const newElement = {
 				id: uuidv4(), 
 				name: file?.name ? file.name.split(".")[0] : "", 
-				file_rarity: 100, /*100/(currentLayer.elements.length+1)*/
+				file_rarity: rarity,
 				file_extension: file?.name ? file.name.split(".")[1] : "", 
 				file
 			}
 			const updatedLayersList = layers.map(layer=>{
-				return layer.id === currentLayer.id ? 
-					{...layer, elements: [...layer.elements, newElement]}
-				:
-					layer;
+				if(layer.id === currentLayer.id){
+					const items = layer.elements.map(item=>Object.assign(item, {file_rarity: rarity}))
+					return {...layer, elements: [...items, newElement]}
+				}
+				else return layer;
 			})
 			setLayers(updatedLayersList)
 			setCurrentLayer(updatedLayersList.find(layer=> layer.id===currentLayer.id))
@@ -44,27 +45,49 @@ function Index({ layers, setLayers, currentLayer, setCurrentLayer, setAvailableN
 			}, 1)
 			setAvailableNfts(totalNFTs)
 			setCollectionSize(totalNFTs)
-			//setListImages(list=>[...list, newElement])
 		}
 	}
 
 	const addLayer = () =>{
-		if (title) {
-			const layer = {
-				id: uuidv4(),
-			    name: title,
-			    elements: [],
-			    layer_rarity: layerRarity ? layerRarity : 100
-			}
-			setLayers([...layers, layer])
+		const layer = {
+			id: uuidv4(),
+		    name: `Layer ${layers.length}`,
+		    elements: [],
+		    layer_rarity: 100
 		}
-		setTitle("")
-		setLayerRarity("")
+		setLayers([...layers, layer])
+		
+		setTitle(layer.name)
+		setLayerRarity(layer.layer_rarity)
+		setCurrentLayer(layer)
 	}
 
 	const handleUpload = ()=>{
 		const inputElement = document.getElementById('file-input')
 		inputElement.click()
+	}
+	const updateCurrentLayer = (e)=>{
+		if (e.target.name=="name") {
+			setTitle(e.target.value)
+			const updatedLayersList = layers.map(layer=>{
+				return layer.id === currentLayer.id ? {...layer, name: e.target.value} : layer;
+			})
+			setLayers(updatedLayersList)
+			setCurrentLayer(updatedLayersList.find(layer=> layer.id===currentLayer.id))
+		}else{
+			setLayerRarity(e.target.value)
+			const updatedLayersList = layers.map(layer=>{
+				return layer.id === currentLayer.id ? {...layer, layer_rarity: e.target.value} : layer;
+			})
+			setLayers(updatedLayersList)
+			setCurrentLayer(updatedLayersList.find(layer=> layer.id===currentLayer.id))
+		}
+	}
+
+	const handleClickLayer = (layer)=>{
+		setCurrentLayer(layer)
+		setTitle(layer.name)
+		setLayerRarity(layer.layer_rarity)
 	}
 	
 	return (
@@ -80,17 +103,17 @@ function Index({ layers, setLayers, currentLayer, setCurrentLayer, setAvailableN
 				<div className="left-side" >
 				 {layers.map(layer=><div key={layer.id} className="layer"
 				 		style={layer.name==currentLayer.name?{background: '#F3F3F3 0% 0% no-repeat padding-box'}:{}}
-				 		onClick={()=>setCurrentLayer(layer)}
+				 		onClick={()=>handleClickLayer(layer)}
 				 	>{layer.name}</div>)}
 				</div>
 				<div className="right-side" >
 					<Form.Field>
 				      <p className="label" >Layer Name</p>
-				      <Input value={title} onChange={(e)=>setTitle(e.target.value)} className="input" />
+				      <Input name="name" value={title} onChange={(e)=>updateCurrentLayer(e)} className="input" />
 				    </Form.Field>
 				    <Form.Field>
 				      <p className="label" >Rarity (%)</p>
-				      <Input value={layerRarity} onChange={(e)=>setLayerRarity(e.target.value)} className="input" />
+				      <Input name="rarity" value={layerRarity} onChange={(e)=>updateCurrentLayer(e)} className="input" />
 				    </Form.Field>
 				    <Grid className="layer-images">
    						<Grid.Row columns={3}>

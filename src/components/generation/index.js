@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, Input, Button, Card, Image as SemImage } from 'semantic-ui-react'
-import PreviewCard from '../../controllers/PreviewCard'
 import { getImagesURLs, isCanvasExist, loadImages } from '../../services'
 import { v4 as uuidv4 } from 'uuid';
 
@@ -14,7 +13,8 @@ const cardStyle = {
 		marginTop: '4px'
 	}
 
-function Index({ projectName, availableNfts=0, collectionSize, setCollectionSize, generateCollection, layers }) {
+function Index({ projectName, availableNfts=0, collectionSize, setCollectionSize, 
+		generateCollection, layers, isLoading, isPixelated, setIsPixelated }) {
 
 	const [previewList, setPreviewList] = useState([])//[ {id, name, url, meta_data} ]
 	let selectedCanvasList = [];
@@ -60,7 +60,7 @@ function Index({ projectName, availableNfts=0, collectionSize, setCollectionSize
 		        })
 		        
 		        var dataURL = canvas.toDataURL();
-		    		setPreviewList( (previousItem)=> [...previousItem, {id: uuidv4(), name:`${projectName} #${i}`, url:dataURL, attributes: objAttributes}])
+		    		setPreviewList( (previousItem)=> [...previousItem, {id: uuidv4(), name:`${projectName} #`, url:dataURL, attributes: objAttributes}])
 		      });
 				}
     	}
@@ -86,13 +86,13 @@ function Index({ projectName, availableNfts=0, collectionSize, setCollectionSize
     }
   }
 
-  const openMetaData = (data)=>{
+  const openMetaData = (_attributes)=>{
+  	const data = {name: projectName, attributes: _attributes}
 		var myWindow = window.open('','_blank');
 		var doc = myWindow.document;
 		doc.open();
 		doc.write(JSON.stringify(data, null, 4));
 		doc.close();
-  	console.log("data: ", data)
   }
 
 
@@ -100,8 +100,9 @@ function Index({ projectName, availableNfts=0, collectionSize, setCollectionSize
 		<div className="container-generation" >
 			<h2>Generation</h2>
 			<p>{`${availableNfts} Available NFTs`}</p>
+			<h3>Preview</h3>
+			{previewList.length===0 && <p>No preview available yet</p>}
 			<Grid className="preview">
-				<h3>Preview</h3>
 				<Grid.Row columns={4}>
 					{previewList.map((exemple, index)=>{
 						return(
@@ -112,7 +113,7 @@ function Index({ projectName, availableNfts=0, collectionSize, setCollectionSize
 									src={exemple.url} 
 								/>
 							    <Card.Content>
-							      <Card.Header>{exemple.name}</Card.Header>
+							      <Card.Header>{exemple.name+(index+1)}</Card.Header>
 							      <Card.Meta>{exemple.id}</Card.Meta>
 							      <Button onClick={()=>openMetaData(exemple.attributes)} style={buttonStyle} content='View Metadata' basic />
 							    </Card.Content>
@@ -130,12 +131,24 @@ function Index({ projectName, availableNfts=0, collectionSize, setCollectionSize
 				<Grid.Row columns={2} verticalAlign='bottom' >
 					<Grid.Column>
 						<p>Collection Size</p>
-				        <Input onChange={(e)=>setCollectionSize(e.target.value)} width={10} className="input" />
-				    </Grid.Column>
-			    	<Grid.Column>
-				        <Button onClick={()=>generateCollection()} color={'green'}>{`Generate ${collectionSize} NFTS`}</Button>
-				    </Grid.Column>
-		    	</Grid.Row>
+		        <Input value={collectionSize} onChange={(e)=>setCollectionSize(e.target.value)} width={10} className="input" />
+			    </Grid.Column>
+		    	<Grid.Column>
+	    			{isLoading && collectionSize?
+	    				<Button>In progress...</Button>
+	    				:
+	    				<>
+							<p>
+								<div class="ui checked checkbox">
+								  <input type="checkbox" checked={isPixelated} onClick={()=>setIsPixelated(!isPixelated)} />
+								  <label><p>Pixelated NFTs</p></label>
+								</div>
+							</p>
+		        	<Button onClick={()=>generateCollection()} color="green">{`Generate ${collectionSize} NFTS`}</Button>
+	    				</>
+	    			}
+			    </Grid.Column>
+	    	</Grid.Row>
 		    </Grid>
 		</div>
 	)

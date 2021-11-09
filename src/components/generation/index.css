@@ -31,3 +31,12 @@
     height: 200px !important;
     object-fit: cover !important;
 }
+
+.ui.centered.inline.loader.active {
+    position: absolute;
+    vertical-align: middle;
+    margin: 0;
+    left: 50%;
+    top: 92%;
+    transform: none;
+}

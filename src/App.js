@@ -3,12 +3,11 @@ import Menu from './components/header'
 import ProjectDetails from './components/projectDetails'
 import LayerDetails from './components/layerDetails'
 import Generation from './components/generation'
-import { networkChoice } from './constants'
+import { networkChoice, pixelFormat, format } from './constants'
 import { v4 as uuidv4 } from 'uuid';
 import JSZip from 'jszip';
 import FileSaver from 'file-saver';
 import { getImagesURLs, isCanvasExist, loadImages } from './services'
-
 
 import './App.css';
 
@@ -16,7 +15,7 @@ function App() {
   /* Project ===================================================== */
   const [projectName, setProjectName] = useState("")
   const [projectDetails, setProjectDetails] = useState("")
-  const [extraMetadata, setExtraMetadata] = useState("")
+  const [extraMetadata, setExtraMetadata] = useState(null)
   const [network, setNetwork] = useState(networkChoice.Ethereum)
   const [symbol, setSymbol] = useState("")
   const [sellerFee, setSellerFee] = useState("")
@@ -34,10 +33,15 @@ function App() {
   const [currentLayer, setCurrentLayer] = useState(layers[0])
   const [collectionSize, setCollectionSize] = useState(0)
   const [availableNfts, setAvailableNfts] = useState(0)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isPixelated, setIsPixelated] = useState(false)
   let isStillOptions = true;
   let collection = [];
   let selectedCanvasList = [];
   let attributes = [];
+  let size = pixelFormat.ratio;
+  let w = format.width * size;
+  let h = format.height * size;
 
   useEffect(() => {
     console.log("layers: ", layers)
@@ -46,9 +50,12 @@ function App() {
   const drawLayer = (data,index)=>{
     console.log("drawLayer.......")
     var canvas = document.createElement("CANVAS");
-    canvas.width = "230"
-    canvas.height = "230"
     var context = canvas.getContext("2d");
+    canvas.width = format.width;
+    canvas.height = format.height;
+    
+    context.imageSmoothingEnabled = false;
+
     var sources = {};
     var {objURLs, objNames, objAttributes} = getImagesURLs(data);
     let iteration = 1;
@@ -79,10 +86,12 @@ function App() {
       console.log("loadImages......")
         objURLs.forEach((url,i)=>{
           if (Boolean(url)) {
-            context.drawImage(images[`image${i+1}`], 0, 0, 230, 230)
+            !isPixelated && context.drawImage(images[`image${i+1}`], 0, 0, canvas.width, canvas.height)
+            isPixelated && context.drawImage(images[`image${i+1}`], 0, 0, w, h)
           }
         })
         
+        isPixelated && context.drawImage(canvas, 0, 0, w, h, 0, 0, canvas.width, canvas.height);
         collection.push(canvas)
         console.log("collection: ", collection)
       });
@@ -93,6 +102,7 @@ function App() {
   }
 
   const generateCollection = ()=>{
+    setIsLoading(true)
     let sizeCount = 1;
     while ( (sizeCount <= collectionSize) && isStillOptions ) {
       drawLayer(layers, sizeCount)
@@ -108,31 +118,28 @@ function App() {
 
     attributes.map((item, i)=>{
       const obj = {
-        name: `#${i+1}`, 
+        name: `${projectName} #${i+1}`, 
         description: projectDetails, 
-        external_url: externalURL,
-        extra_metadata: extraMetadata ? JSON.stringify(JSON.parse(extraMetadata), null, 4) : "",
         network,
-        symbol: symbol,
-        seller_fee_basis_points: sellerFee,
-        external_URL: externalURL,
-        creatorAddress: creatorAddress,
         image: `${i+1}.png`,
-        "attributes": item,
-        "properties": {
-          "category": "image",
-          "files": [
-            {
-              "uri": `${i+1}.png`,
-              "type": "image/png"
-            }
-          ],
-          "creators": []
-        },
-        "compiler": "https://nft-generator.com"
+        attributes: item,
+        compiler: "https://nft-generator.com"
       };
-      
-      metadata.file(`${i+1}.json`, JSON.stringify(obj, null, 4))
+      if (network==networkChoice.Solana){
+        Object.assign(obj, {
+          symbol: symbol,
+          seller_fee_basis_points: sellerFee,
+          external_URL: externalURL,
+          creatorAddress: creatorAddress,
+        })
+      }
+      console.log()
+      if(typeof JSON.parse(extraMetadata) == 'object'){
+        const jsonMetaData = JSON.parse(extraMetadata);
+        metadata.file(`${i+1}.json`, JSON.stringify(Object.assign(obj, jsonMetaData), null, 4))
+      }else {
+        metadata.file(`${i+1}.json`, JSON.stringify(obj, null, 4))
+      }
     })
 
     var img = zip.folder("assets");
@@ -143,6 +150,7 @@ function App() {
 
     zip.generateAsync({type:"blob"})
     .then(function(content) {
+      setIsLoading(false)
       console.log("Save......")
       FileSaver.saveAs(content, "collection.zip");
     });
@@ -180,6 +188,8 @@ function App() {
           generateCollection={generateCollection}
           collectionSize={collectionSize} setCollectionSize={setCollectionSize}
           layers={layers}
+          isLoading={isLoading} setIsLoading={setIsLoading}
+          isPixelated={isPixelated} setIsPixelated={setIsPixelated}
         />
       </div>
     </>
